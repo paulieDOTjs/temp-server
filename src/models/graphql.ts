@@ -17,23 +17,16 @@ export type Scalars = {
 
 export type Badge = {
   __typename?: 'Badge';
-  lastEarnedTime: Scalars['Date'];
+  lastEarnedTime?: Maybe<Scalars['Date']>;
   thumbUrl: Scalars['String'];
   title: Scalars['String'];
 };
 
-export type ExternalUrl = {
-  __typename?: 'ExternalUrl';
-  displayText: Scalars['String'];
-  href: Scalars['String'];
-  iconUrl?: Maybe<Scalars['String']>;
-};
-
 export type Level = {
   __typename?: 'Level';
-  currentLevel: Scalars['String'];
-  currentPoints: Scalars['Int'];
-  nextLevelPoints: Scalars['Int'];
+  currentLevel?: Maybe<Scalars['String']>;
+  currentPoints?: Maybe<Scalars['Int']>;
+  nextLevelPoints?: Maybe<Scalars['Int']>;
 };
 
 export type LockedStatus = {
@@ -46,7 +39,7 @@ export type Mission = {
   __typename?: 'Mission';
   completed: Scalars['Boolean'];
   description: Scalars['String'];
-  earns?: Maybe<Badge>;
+  earnBadges: Array<Badge>;
   expiringDate: Scalars['Date'];
   expiringSoon: Scalars['Boolean'];
   featured: Scalars['Boolean'];
@@ -55,15 +48,14 @@ export type Mission = {
   inProgress: Scalars['Boolean'];
   lockedStatus: LockedStatus;
   name: Scalars['String'];
-  point: Point;
+  point?: Maybe<Point>;
   repeats: Scalars['Boolean'];
-  tasks?: Maybe<Array<Maybe<ExternalUrl>>>;
   thumbUrl: Scalars['String'];
 };
 
 export enum MissionFlag {
-  Featured = 'FEATURED',
-  InProgress = 'IN_PROGRESS'
+  Eligible = 'ELIGIBLE',
+  Featured = 'FEATURED'
 }
 
 export type Point = {
@@ -78,20 +70,12 @@ export type Query = {
   me?: Maybe<User>;
 };
 
-
-export type QueryMeArgs = {
-  token?: InputMaybe<Scalars['String']>;
-};
-
 export type User = {
   __typename?: 'User';
-  badges: Array<Maybe<Badge>>;
-  games?: Maybe<Scalars['Int']>;
-  level: Level;
-  missions: Array<Maybe<Mission>>;
-  notificationCount?: Maybe<Scalars['Int']>;
+  badges: Array<Badge>;
+  level?: Maybe<Level>;
+  missions?: Maybe<Array<Mission>>;
   photoUrl: Scalars['String'];
-  points: Scalars['Int'];
 };
 
 
@@ -175,37 +159,35 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  Badge: ResolverTypeWrapper<Badge>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  Date: ResolverTypeWrapper<Scalars['Date']>;
-  ExternalUrl: ResolverTypeWrapper<ExternalUrl>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
-  Level: ResolverTypeWrapper<Level>;
-  LockedStatus: ResolverTypeWrapper<LockedStatus>;
-  Mission: ResolverTypeWrapper<Mission>;
-  MissionFlag: MissionFlag;
-  Point: ResolverTypeWrapper<Point>;
+  Badge: ResolverTypeWrapper<Partial<Badge>>;
+  Boolean: ResolverTypeWrapper<Partial<Scalars['Boolean']>>;
+  Date: ResolverTypeWrapper<Partial<Scalars['Date']>>;
+  Int: ResolverTypeWrapper<Partial<Scalars['Int']>>;
+  Level: ResolverTypeWrapper<Partial<Level>>;
+  LockedStatus: ResolverTypeWrapper<Partial<LockedStatus>>;
+  Mission: ResolverTypeWrapper<Partial<Mission>>;
+  MissionFlag: ResolverTypeWrapper<Partial<MissionFlag>>;
+  Point: ResolverTypeWrapper<Partial<Point>>;
   Query: ResolverTypeWrapper<{}>;
-  String: ResolverTypeWrapper<Scalars['String']>;
-  User: ResolverTypeWrapper<User>;
-  _Service: ResolverTypeWrapper<_Service>;
+  String: ResolverTypeWrapper<Partial<Scalars['String']>>;
+  User: ResolverTypeWrapper<Partial<User>>;
+  _Service: ResolverTypeWrapper<Partial<_Service>>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  Badge: Badge;
-  Boolean: Scalars['Boolean'];
-  Date: Scalars['Date'];
-  ExternalUrl: ExternalUrl;
-  Int: Scalars['Int'];
-  Level: Level;
-  LockedStatus: LockedStatus;
-  Mission: Mission;
-  Point: Point;
+  Badge: Partial<Badge>;
+  Boolean: Partial<Scalars['Boolean']>;
+  Date: Partial<Scalars['Date']>;
+  Int: Partial<Scalars['Int']>;
+  Level: Partial<Level>;
+  LockedStatus: Partial<LockedStatus>;
+  Mission: Partial<Mission>;
+  Point: Partial<Point>;
   Query: {};
-  String: Scalars['String'];
-  User: User;
-  _Service: _Service;
+  String: Partial<Scalars['String']>;
+  User: Partial<User>;
+  _Service: Partial<_Service>;
 }>;
 
 export type ExtendsDirectiveArgs = { };
@@ -235,7 +217,7 @@ export type RequiresDirectiveArgs = {
 export type RequiresDirectiveResolver<Result, Parent, ContextType = any, Args = RequiresDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type BadgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Badge'] = ResolversParentTypes['Badge']> = ResolversObject<{
-  lastEarnedTime?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  lastEarnedTime?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   thumbUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -245,17 +227,10 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
   name: 'Date';
 }
 
-export type ExternalUrlResolvers<ContextType = any, ParentType extends ResolversParentTypes['ExternalUrl'] = ResolversParentTypes['ExternalUrl']> = ResolversObject<{
-  displayText?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  href?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  iconUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export type LevelResolvers<ContextType = any, ParentType extends ResolversParentTypes['Level'] = ResolversParentTypes['Level']> = ResolversObject<{
-  currentLevel?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  currentPoints?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  nextLevelPoints?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  currentLevel?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  currentPoints?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  nextLevelPoints?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -268,7 +243,7 @@ export type LockedStatusResolvers<ContextType = any, ParentType extends Resolver
 export type MissionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mission'] = ResolversParentTypes['Mission']> = ResolversObject<{
   completed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  earns?: Resolver<Maybe<ResolversTypes['Badge']>, ParentType, ContextType>;
+  earnBadges?: Resolver<Array<ResolversTypes['Badge']>, ParentType, ContextType>;
   expiringDate?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   expiringSoon?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   featured?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -277,9 +252,8 @@ export type MissionResolvers<ContextType = any, ParentType extends ResolversPare
   inProgress?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   lockedStatus?: Resolver<ResolversTypes['LockedStatus'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  point?: Resolver<ResolversTypes['Point'], ParentType, ContextType>;
+  point?: Resolver<Maybe<ResolversTypes['Point']>, ParentType, ContextType>;
   repeats?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  tasks?: Resolver<Maybe<Array<Maybe<ResolversTypes['ExternalUrl']>>>, ParentType, ContextType>;
   thumbUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -292,17 +266,14 @@ export type PointResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   _service?: Resolver<ResolversTypes['_Service'], ParentType, ContextType>;
-  me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryMeArgs, never>>;
+  me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 }>;
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
-  badges?: Resolver<Array<Maybe<ResolversTypes['Badge']>>, ParentType, ContextType>;
-  games?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  level?: Resolver<ResolversTypes['Level'], ParentType, ContextType>;
-  missions?: Resolver<Array<Maybe<ResolversTypes['Mission']>>, ParentType, ContextType, RequireFields<UserMissionsArgs, 'flag'>>;
-  notificationCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  badges?: Resolver<Array<ResolversTypes['Badge']>, ParentType, ContextType>;
+  level?: Resolver<Maybe<ResolversTypes['Level']>, ParentType, ContextType>;
+  missions?: Resolver<Maybe<Array<ResolversTypes['Mission']>>, ParentType, ContextType, RequireFields<UserMissionsArgs, 'flag'>>;
   photoUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  points?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -314,7 +285,6 @@ export type _ServiceResolvers<ContextType = any, ParentType extends ResolversPar
 export type Resolvers<ContextType = any> = ResolversObject<{
   Badge?: BadgeResolvers<ContextType>;
   Date?: GraphQLScalarType;
-  ExternalUrl?: ExternalUrlResolvers<ContextType>;
   Level?: LevelResolvers<ContextType>;
   LockedStatus?: LockedStatusResolvers<ContextType>;
   Mission?: MissionResolvers<ContextType>;

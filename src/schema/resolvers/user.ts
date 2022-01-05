@@ -7,8 +7,8 @@ import { sampleMissions } from "./mission";
 export const userResolve: UserResolvers = {
   photoUrl: () => getPhoto(),
   missions: (_, args) => {
-    if (args.flag === "IN_PROGRESS") {
-      return sampleMissions.filter((mission) => mission.inProgress);
+    if (args.flag === "ELIGIBLE") {
+      return sampleMissions;
     }
     if (args.flag === "FEATURED") {
       return sampleMissions.filter((mission) => mission.featured);

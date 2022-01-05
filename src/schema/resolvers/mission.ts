@@ -33,15 +33,15 @@ function getLockedStatus() {
 }
 
 export const missionResolve: MissionResolvers = {
-  earns: (root) => getBadge(root.id),
+  earnBadges: (root) => getBadges(root.id),
 };
 
-function getBadge(missionID: string | null | undefined) {
+function getBadges(missionID: string | null | undefined) {
   if (missionID) {
-    const foundBadge = sampleBadges.find(
+    const foundBadges = sampleBadges.filter(
       (badge) => badge.missionID === missionID
     );
-    if (foundBadge) return foundBadge;
+    if (foundBadges) return foundBadges;
   }
-  return null;
+  return [];
 }

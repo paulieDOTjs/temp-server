@@ -11,12 +11,12 @@ export const resolvers: Resolvers = {
         const user = {} as User;
         setTimeout(() => {
           res(user);
-        }, 5000);
+        }, 1000);
       });
       return prom;
     },
   },
   User: userResolve,
   Mission: missionResolve,
-  ExternalUrl: externalUrlResolve,
+  // ExternalUrl: externalUrlResolve,
 };

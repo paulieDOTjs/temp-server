@@ -4,6 +4,7 @@ documents: null
 generates:
   src/models/graphql.ts:
     config:
+      defaultMapper: Partial<{T}>
       useIndexSignature: true
       # mappers:
       #   Book: ./BookModel#BookModel
