@@ -36,7 +36,7 @@ export const typeDefs = gql`
     repeats: Boolean!
     expiringSoon: Boolean!
     inProgress: Boolean!
-    #    tasks: [ExternalUrl!]
+    tasks: [ExternalUrl!]!
     earnBadges: [Badge!]!
   }
 
@@ -55,11 +55,11 @@ export const typeDefs = gql`
   # privacy policy maybe? Unsure about that one
   # Also unsure of having the iconUrl in the backend, but seems like something we might want
   # I would like the name of the stores for example to come back from the backend
-  #type ExternalUrl {
-  #    displayText: String!
-  #    href: String!
-  #    iconUrl: String
-  #}
+  type ExternalUrl {
+    displayText: String!
+    href: String!
+    iconUrl: String
+  }
 
   enum MissionFlag {
     FEATURED
@@ -68,13 +68,22 @@ export const typeDefs = gql`
 
   # https://api.sandbox.bunchball.com/docs/#/Users/get_one_user
   type User {
-    photoUrl: String!
+    photoUrl: String
     badges: [Badge!]!
+    missions(flag: MissionFlag!): [Mission!]!
+    notificationCount: Int # the api for this doesn't exist yet, but it'll come from Xchange
+    games: Int
     level: Level
-    missions(flag: MissionFlag!): [Mission!]
+    points: Int
   }
 
   type Query {
     me: User
+
+    demoSync: Boolean!
+    demoAsync: Boolean!
+
+    nackleOAuthToken: String!
+    availableGamePlays: Int
   }
 `;

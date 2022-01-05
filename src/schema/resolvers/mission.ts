@@ -21,6 +21,7 @@ export const sampleMissions = new Array(15).fill("").map((_, i) => ({
   point: { category: "dollars", count: Math.floor(Math.random() * 10) * 100 },
   repeats: getRandomBoolean(),
   thumbUrl: "https://via.placeholder.com/350x150",
+  tasks: [],
 }));
 
 function getLockedStatus() {

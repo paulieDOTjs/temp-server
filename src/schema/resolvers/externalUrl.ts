@@ -1,6 +1,6 @@
-import { ExternalUrlResolvers } from "../../models/graphql";
+// import { ExternalUrlResolvers } from "../../models/graphql";
 
-export const externalUrlResolve: ExternalUrlResolvers = {
-  displayText: () => "google",
-  href: () => "https://www.google.com/",
-};
+// export const externalUrlResolve: ExternalUrlResolvers = {
+//   displayText: () => "google",
+//   href: () => "https://www.google.com/",
+// };

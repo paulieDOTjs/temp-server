@@ -1,6 +1,6 @@
 import { Resolvers, User } from "../../models/graphql";
 
-import { externalUrlResolve } from "./externalUrl";
+// import { externalUrlResolve } from "./externalUrl";
 import { missionResolve } from "./mission";
 import { userResolve } from "./user";
 
@@ -18,5 +18,5 @@ export const resolvers: Resolvers = {
   },
   User: userResolve,
   Mission: missionResolve,
-  // ExternalUrl: externalUrlResolve,
+  ExternalUrl: () => [],
 };
