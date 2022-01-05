@@ -36,8 +36,14 @@ export const typeDefs = gql`
     repeats: Boolean!
     expiringSoon: Boolean!
     inProgress: Boolean!
-    tasks: [ExternalUrl!]!
+    tasks: [TasksUnion!]!
     earnBadges: [Badge!]!
+  }
+
+  union TasksUnion = ExternalUrl | Quiz | Video
+
+  type Video {
+    srcUrl: String
   }
 
   # https://api.sandbox.bunchball.com/docs/#/Users/get_levels
@@ -45,6 +51,12 @@ export const typeDefs = gql`
     currentLevel: String
     currentPoints: Int
     nextLevelPoints: Int
+  }
+
+  type Quiz {
+    token: String!
+    server: String!
+    userId: String!
   }
 
   # We need urls to...
@@ -70,15 +82,16 @@ export const typeDefs = gql`
   type User {
     photoUrl: String
     badges: [Badge!]!
+    level: Level
     missions(flag: MissionFlag!): [Mission!]!
     notificationCount: Int # the api for this doesn't exist yet, but it'll come from Xchange
     games: Int
-    level: Level
     points: Int
   }
 
   type Query {
     me: User
+    mission(id: String!): Mission
 
     demoSync: Boolean!
     demoAsync: Boolean!
