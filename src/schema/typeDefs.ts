@@ -23,27 +23,33 @@ export const typeDefs = gql`
 
   # https://api.sandbox.bunchball.com/docs/#/Challenges/get_challenges
   type Mission {
-    completed: Boolean!
-    featured: Boolean!
+    completed: Boolean
+    featured: Boolean
     id: String!
-    name: String!
-    imageUrl: String!
-    thumbUrl: String!
-    description: String!
+    name: String
+    imageUrl: String
+    thumbUrl: String
+    description: String
     point: Point
-    expiringDate: Date!
-    lockedStatus: LockedStatus!
-    repeats: Boolean!
-    expiringSoon: Boolean!
-    inProgress: Boolean!
-    tasks: [TasksUnion!]!
+    expiringDate: Date
+    lockedStatus: LockedStatus
+    repeats: Boolean
+    expiringSoon: Boolean
+    inProgress: Boolean
+    tasks: [TasksUnion!]
     earnBadges: [Badge!]!
   }
 
-  union TasksUnion = ExternalUrl | Quiz | Video
+  union TasksUnion = ClickThrough | Quiz | Video
+
+  type ClickThrough {
+    url: String
+    completed: Boolean
+  }
 
   type Video {
     srcUrl: String
+    completed: Boolean
   }
 
   # https://api.sandbox.bunchball.com/docs/#/Users/get_levels
@@ -57,6 +63,8 @@ export const typeDefs = gql`
     token: String!
     server: String!
     userId: String!
+    quizId: String!
+    completed: Boolean
   }
 
   # We need urls to...
@@ -67,11 +75,11 @@ export const typeDefs = gql`
   # privacy policy maybe? Unsure about that one
   # Also unsure of having the iconUrl in the backend, but seems like something we might want
   # I would like the name of the stores for example to come back from the backend
-  type ExternalUrl {
-    displayText: String!
-    href: String!
-    iconUrl: String
-  }
+  # type ExternalUrl {
+  #   displayText: String
+  #   href: String
+  #   iconUrl: String
+  # }
 
   enum MissionFlag {
     FEATURED
@@ -83,7 +91,7 @@ export const typeDefs = gql`
     photoUrl: String
     badges: [Badge!]!
     level: Level
-    missions(flag: MissionFlag!): [Mission!]!
+    missions(flag: MissionFlag!): [Mission!]
     notificationCount: Int # the api for this doesn't exist yet, but it'll come from Xchange
     games: Int
     points: Int
