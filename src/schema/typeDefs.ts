@@ -6,7 +6,7 @@ export const typeDefs = gql`
   # https://api.sandbox.bunchball.com/docs/#/users/{userId}/badges
   type Badge {
     title: String!
-    thumbUrl: String!
+    thumbUrl: String
     lastEarnedTime: Date
   }
 
@@ -43,11 +43,13 @@ export const typeDefs = gql`
   union TasksUnion = ClickThrough | Quiz | Video
 
   type ClickThrough {
+    displayText: String
     url: String
     completed: Boolean
   }
 
   type Video {
+    displayText: String
     srcUrl: String
     completed: Boolean
   }
@@ -60,6 +62,7 @@ export const typeDefs = gql`
   }
 
   type Quiz {
+    displayText: String
     token: String!
     server: String!
     userId: String!
@@ -76,9 +79,9 @@ export const typeDefs = gql`
   # Also unsure of having the iconUrl in the backend, but seems like something we might want
   # I would like the name of the stores for example to come back from the backend
   # type ExternalUrl {
-  #   displayText: String
-  #   href: String
-  #   iconUrl: String
+  #    displayText: String
+  #    href: String
+  #    iconUrl: String
   # }
 
   enum MissionFlag {
