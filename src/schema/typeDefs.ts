@@ -91,6 +91,7 @@ export const typeDefs = gql`
 
   # https://api.sandbox.bunchball.com/docs/#/Users/get_one_user
   type User {
+    id: String!
     photoUrl: String
     badges: [Badge!]!
     level: Level
@@ -109,5 +110,15 @@ export const typeDefs = gql`
 
     nackleOAuthToken: String!
     availableGamePlays: Int
+  }
+
+  type MediaConsumedResult {
+    eventId: String
+    success: Boolean!
+  }
+
+  type Mutation {
+    linkClicked(url: String!): MediaConsumedResult
+    videoWatched(url: String!): MediaConsumedResult
   }
 `;

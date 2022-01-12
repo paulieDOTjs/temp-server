@@ -4,6 +4,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -18,15 +19,15 @@ export type Scalars = {
 export type Badge = {
   __typename?: 'Badge';
   lastEarnedTime?: Maybe<Scalars['Date']>;
-  thumbUrl: Scalars['String'];
+  thumbUrl?: Maybe<Scalars['String']>;
   title: Scalars['String'];
 };
 
-export type ExternalUrl = {
-  __typename?: 'ExternalUrl';
-  displayText: Scalars['String'];
-  href: Scalars['String'];
-  iconUrl?: Maybe<Scalars['String']>;
+export type ClickThrough = {
+  __typename?: 'ClickThrough';
+  completed?: Maybe<Scalars['Boolean']>;
+  displayText?: Maybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']>;
 };
 
 export type Level = {
@@ -42,29 +43,51 @@ export type LockedStatus = {
   reason?: Maybe<Scalars['String']>;
 };
 
+export type MediaConsumedResult = {
+  __typename?: 'MediaConsumedResult';
+  eventId?: Maybe<Scalars['String']>;
+  success: Scalars['Boolean'];
+};
+
 export type Mission = {
   __typename?: 'Mission';
-  completed: Scalars['Boolean'];
-  description: Scalars['String'];
+  completed?: Maybe<Scalars['Boolean']>;
+  description?: Maybe<Scalars['String']>;
   earnBadges: Array<Badge>;
-  expiringDate: Scalars['Date'];
-  expiringSoon: Scalars['Boolean'];
-  featured: Scalars['Boolean'];
+  expiringDate?: Maybe<Scalars['Date']>;
+  expiringSoon?: Maybe<Scalars['Boolean']>;
+  featured?: Maybe<Scalars['Boolean']>;
   id: Scalars['String'];
-  imageUrl: Scalars['String'];
-  inProgress: Scalars['Boolean'];
-  lockedStatus: LockedStatus;
-  name: Scalars['String'];
+  imageUrl?: Maybe<Scalars['String']>;
+  inProgress?: Maybe<Scalars['Boolean']>;
+  lockedStatus?: Maybe<LockedStatus>;
+  name?: Maybe<Scalars['String']>;
   point?: Maybe<Point>;
-  repeats: Scalars['Boolean'];
-  tasks: Array<ExternalUrl>;
-  thumbUrl: Scalars['String'];
+  repeats?: Maybe<Scalars['Boolean']>;
+  tasks?: Maybe<Array<TasksUnion>>;
+  thumbUrl?: Maybe<Scalars['String']>;
 };
 
 export enum MissionFlag {
   Eligible = 'ELIGIBLE',
   Featured = 'FEATURED'
 }
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  linkClicked?: Maybe<MediaConsumedResult>;
+  videoWatched?: Maybe<MediaConsumedResult>;
+};
+
+
+export type MutationLinkClickedArgs = {
+  url: Scalars['String'];
+};
+
+
+export type MutationVideoWatchedArgs = {
+  url: Scalars['String'];
+};
 
 export type Point = {
   __typename?: 'Point';
@@ -79,15 +102,34 @@ export type Query = {
   demoAsync: Scalars['Boolean'];
   demoSync: Scalars['Boolean'];
   me?: Maybe<User>;
+  mission?: Maybe<Mission>;
   nackleOAuthToken: Scalars['String'];
 };
+
+
+export type QueryMissionArgs = {
+  id: Scalars['String'];
+};
+
+export type Quiz = {
+  __typename?: 'Quiz';
+  completed?: Maybe<Scalars['Boolean']>;
+  displayText?: Maybe<Scalars['String']>;
+  quizId: Scalars['String'];
+  server: Scalars['String'];
+  token: Scalars['String'];
+  userId: Scalars['String'];
+};
+
+export type TasksUnion = ClickThrough | Quiz | Video;
 
 export type User = {
   __typename?: 'User';
   badges: Array<Badge>;
   games?: Maybe<Scalars['Int']>;
+  id: Scalars['String'];
   level?: Maybe<Level>;
-  missions: Array<Mission>;
+  missions?: Maybe<Array<Mission>>;
   notificationCount?: Maybe<Scalars['Int']>;
   photoUrl?: Maybe<Scalars['String']>;
   points?: Maybe<Scalars['Int']>;
@@ -96,6 +138,13 @@ export type User = {
 
 export type UserMissionsArgs = {
   flag: MissionFlag;
+};
+
+export type Video = {
+  __typename?: 'Video';
+  completed?: Maybe<Scalars['Boolean']>;
+  displayText?: Maybe<Scalars['String']>;
+  srcUrl?: Maybe<Scalars['String']>;
 };
 
 export type _Service = {
@@ -176,17 +225,22 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = ResolversObject<{
   Badge: ResolverTypeWrapper<Partial<Badge>>;
   Boolean: ResolverTypeWrapper<Partial<Scalars['Boolean']>>;
+  ClickThrough: ResolverTypeWrapper<Partial<ClickThrough>>;
   Date: ResolverTypeWrapper<Partial<Scalars['Date']>>;
-  ExternalUrl: ResolverTypeWrapper<Partial<ExternalUrl>>;
   Int: ResolverTypeWrapper<Partial<Scalars['Int']>>;
   Level: ResolverTypeWrapper<Partial<Level>>;
   LockedStatus: ResolverTypeWrapper<Partial<LockedStatus>>;
-  Mission: ResolverTypeWrapper<Partial<Mission>>;
+  MediaConsumedResult: ResolverTypeWrapper<Partial<MediaConsumedResult>>;
+  Mission: ResolverTypeWrapper<Partial<Omit<Mission, 'tasks'> & { tasks?: Maybe<Array<ResolversTypes['TasksUnion']>> }>>;
   MissionFlag: ResolverTypeWrapper<Partial<MissionFlag>>;
+  Mutation: ResolverTypeWrapper<{}>;
   Point: ResolverTypeWrapper<Partial<Point>>;
   Query: ResolverTypeWrapper<{}>;
+  Quiz: ResolverTypeWrapper<Partial<Quiz>>;
   String: ResolverTypeWrapper<Partial<Scalars['String']>>;
+  TasksUnion: Partial<ResolversTypes['ClickThrough'] | ResolversTypes['Quiz'] | ResolversTypes['Video']>;
   User: ResolverTypeWrapper<Partial<User>>;
+  Video: ResolverTypeWrapper<Partial<Video>>;
   _Service: ResolverTypeWrapper<Partial<_Service>>;
 }>;
 
@@ -194,16 +248,21 @@ export type ResolversTypes = ResolversObject<{
 export type ResolversParentTypes = ResolversObject<{
   Badge: Partial<Badge>;
   Boolean: Partial<Scalars['Boolean']>;
+  ClickThrough: Partial<ClickThrough>;
   Date: Partial<Scalars['Date']>;
-  ExternalUrl: Partial<ExternalUrl>;
   Int: Partial<Scalars['Int']>;
   Level: Partial<Level>;
   LockedStatus: Partial<LockedStatus>;
-  Mission: Partial<Mission>;
+  MediaConsumedResult: Partial<MediaConsumedResult>;
+  Mission: Partial<Omit<Mission, 'tasks'> & { tasks?: Maybe<Array<ResolversParentTypes['TasksUnion']>> }>;
+  Mutation: {};
   Point: Partial<Point>;
   Query: {};
+  Quiz: Partial<Quiz>;
   String: Partial<Scalars['String']>;
+  TasksUnion: Partial<ResolversParentTypes['ClickThrough'] | ResolversParentTypes['Quiz'] | ResolversParentTypes['Video']>;
   User: Partial<User>;
+  Video: Partial<Video>;
   _Service: Partial<_Service>;
 }>;
 
@@ -235,21 +294,21 @@ export type RequiresDirectiveResolver<Result, Parent, ContextType = any, Args = 
 
 export type BadgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Badge'] = ResolversParentTypes['Badge']> = ResolversObject<{
   lastEarnedTime?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  thumbUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  thumbUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ClickThroughResolvers<ContextType = any, ParentType extends ResolversParentTypes['ClickThrough'] = ResolversParentTypes['ClickThrough']> = ResolversObject<{
+  completed?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  displayText?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
   name: 'Date';
 }
-
-export type ExternalUrlResolvers<ContextType = any, ParentType extends ResolversParentTypes['ExternalUrl'] = ResolversParentTypes['ExternalUrl']> = ResolversObject<{
-  displayText?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  href?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  iconUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
 
 export type LevelResolvers<ContextType = any, ParentType extends ResolversParentTypes['Level'] = ResolversParentTypes['Level']> = ResolversObject<{
   currentLevel?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -264,23 +323,34 @@ export type LockedStatusResolvers<ContextType = any, ParentType extends Resolver
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type MissionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mission'] = ResolversParentTypes['Mission']> = ResolversObject<{
-  completed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  earnBadges?: Resolver<Array<ResolversTypes['Badge']>, ParentType, ContextType>;
-  expiringDate?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  expiringSoon?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  featured?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  imageUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  inProgress?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  lockedStatus?: Resolver<ResolversTypes['LockedStatus'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  point?: Resolver<Maybe<ResolversTypes['Point']>, ParentType, ContextType>;
-  repeats?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  tasks?: Resolver<Array<ResolversTypes['ExternalUrl']>, ParentType, ContextType>;
-  thumbUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+export type MediaConsumedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['MediaConsumedResult'] = ResolversParentTypes['MediaConsumedResult']> = ResolversObject<{
+  eventId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MissionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mission'] = ResolversParentTypes['Mission']> = ResolversObject<{
+  completed?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  earnBadges?: Resolver<Array<ResolversTypes['Badge']>, ParentType, ContextType>;
+  expiringDate?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  expiringSoon?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  featured?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  inProgress?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  lockedStatus?: Resolver<Maybe<ResolversTypes['LockedStatus']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  point?: Resolver<Maybe<ResolversTypes['Point']>, ParentType, ContextType>;
+  repeats?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  tasks?: Resolver<Maybe<Array<ResolversTypes['TasksUnion']>>, ParentType, ContextType>;
+  thumbUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
+  linkClicked?: Resolver<Maybe<ResolversTypes['MediaConsumedResult']>, ParentType, ContextType, RequireFields<MutationLinkClickedArgs, 'url'>>;
+  videoWatched?: Resolver<Maybe<ResolversTypes['MediaConsumedResult']>, ParentType, ContextType, RequireFields<MutationVideoWatchedArgs, 'url'>>;
 }>;
 
 export type PointResolvers<ContextType = any, ParentType extends ResolversParentTypes['Point'] = ResolversParentTypes['Point']> = ResolversObject<{
@@ -295,17 +365,40 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   demoAsync?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   demoSync?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  mission?: Resolver<Maybe<ResolversTypes['Mission']>, ParentType, ContextType, RequireFields<QueryMissionArgs, 'id'>>;
   nackleOAuthToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+}>;
+
+export type QuizResolvers<ContextType = any, ParentType extends ResolversParentTypes['Quiz'] = ResolversParentTypes['Quiz']> = ResolversObject<{
+  completed?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  displayText?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  quizId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  server?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type TasksUnionResolvers<ContextType = any, ParentType extends ResolversParentTypes['TasksUnion'] = ResolversParentTypes['TasksUnion']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'ClickThrough' | 'Quiz' | 'Video', ParentType, ContextType>;
 }>;
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
   badges?: Resolver<Array<ResolversTypes['Badge']>, ParentType, ContextType>;
   games?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   level?: Resolver<Maybe<ResolversTypes['Level']>, ParentType, ContextType>;
-  missions?: Resolver<Array<ResolversTypes['Mission']>, ParentType, ContextType, RequireFields<UserMissionsArgs, 'flag'>>;
+  missions?: Resolver<Maybe<Array<ResolversTypes['Mission']>>, ParentType, ContextType, RequireFields<UserMissionsArgs, 'flag'>>;
   notificationCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   photoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   points?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type VideoResolvers<ContextType = any, ParentType extends ResolversParentTypes['Video'] = ResolversParentTypes['Video']> = ResolversObject<{
+  completed?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  displayText?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  srcUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -316,14 +409,19 @@ export type _ServiceResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type Resolvers<ContextType = any> = ResolversObject<{
   Badge?: BadgeResolvers<ContextType>;
+  ClickThrough?: ClickThroughResolvers<ContextType>;
   Date?: GraphQLScalarType;
-  ExternalUrl?: ExternalUrlResolvers<ContextType>;
   Level?: LevelResolvers<ContextType>;
   LockedStatus?: LockedStatusResolvers<ContextType>;
+  MediaConsumedResult?: MediaConsumedResultResolvers<ContextType>;
   Mission?: MissionResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
   Point?: PointResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Quiz?: QuizResolvers<ContextType>;
+  TasksUnion?: TasksUnionResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  Video?: VideoResolvers<ContextType>;
   _Service?: _ServiceResolvers<ContextType>;
 }>;
 

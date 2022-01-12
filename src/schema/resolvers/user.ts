@@ -5,6 +5,7 @@ import { sampleBadges } from "./badge";
 import { sampleMissions } from "./mission";
 
 export const userResolve: UserResolvers = {
+  id: () => "id1",
   photoUrl: () => getPhoto(),
   missions: (_, args) => {
     if (args.flag === "ELIGIBLE") {
