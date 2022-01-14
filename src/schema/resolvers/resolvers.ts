@@ -8,7 +8,14 @@ export const resolvers: Resolvers = {
   Query: {
     me: async () => {
       const prom = new Promise<User>((res) => {
-        const user = {} as User;
+        const user = {
+          links: {
+            badges: "https://www.google.com",
+            games: "https://www.google.com",
+            messages: "https://www.google.com",
+            privacyPolicy: "https://www.google.com",
+          },
+        } as User;
         setTimeout(() => {
           res(user);
         }, 1000);
