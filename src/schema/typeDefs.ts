@@ -16,6 +16,11 @@ export const typeDefs = gql`
     category: String!
   }
 
+  type Sweepstake {
+    count: Int!
+    category: String!
+  }
+
   type LockedStatus {
     locked: Boolean!
     reason: String
@@ -27,21 +32,43 @@ export const typeDefs = gql`
     featured: Boolean
     id: String!
     name: String
+    iconImageUrl: String
+    largeTileImageUrl: String # (coming from custom)
+    # deprecated
     imageUrl: String
+    # deprecated
     thumbUrl: String
     description: String
+    # deprecated
     point: Point
     expiringDate: Date
     lockedStatus: LockedStatus
     repeats: Boolean
     expiringSoon: Boolean
     inProgress: Boolean
+    rewards: [Reward!]
+
+    # deprecated
+    earnBadges: [Badge!]
+
+    # We need to work this out. Right now this is going to cause an N+1 problem.
+    # We have temporarily resolved this by adding tasksByMissionId(missionId: String!): [TasksUnion!] on User
+
     tasks: [TasksUnion!]
-    earnBadges: [Badge!]!
   }
 
-  union TasksUnion = ClickThrough | Quiz | Video
+  union Reward = Badge | Point | Sweepstake
 
+  union TasksUnion = ClickThrough | ClickableLink | Quiz | Video | ExternalTask
+
+  type ClickableLink {
+    actionName: String!
+    displayText: String
+    url: String
+    completed: Boolean
+  }
+
+  # deprecated
   type ClickThrough {
     displayText: String
     url: String
@@ -49,16 +76,12 @@ export const typeDefs = gql`
   }
 
   type Video {
+    actionName: String!
     displayText: String
+    # deprecated
     srcUrl: String
+    url: String
     completed: Boolean
-  }
-
-  # https://api.sandbox.bunchball.com/docs/#/Users/get_levels
-  type Level {
-    currentLevel: String
-    currentPoints: Int
-    nextLevelPoints: Int
   }
 
   type Quiz {
@@ -67,6 +90,11 @@ export const typeDefs = gql`
     server: String!
     userId: String!
     quizId: String!
+    completed: Boolean
+  }
+
+  type ExternalTask {
+    displayText: String
     completed: Boolean
   }
 
@@ -89,36 +117,81 @@ export const typeDefs = gql`
     ELIGIBLE
   }
 
+  type Links {
+    badges: String!
+    games: String!
+    messages: String!
+    privacyPolicy: String!
+  }
+
+  # https://api.sandbox.bunchball.com/docs/#/Users/get_levels
+  type Level {
+    currentLevel: String
+    currentPoints: Int
+    nextLevelPoints: Int
+  }
+
   # https://api.sandbox.bunchball.com/docs/#/Users/get_one_user
   type User {
+    "A unique identifier for the user"
     id: String!
-    photoUrl: String
+
+    "Badges the user has already earned"
     badges: [Badge!]!
-    level: Level
-    missions(flag: MissionFlag!): [Mission!]
-    notificationCount: Int # the api for this doesn't exist yet, but it'll come from Xchange
+
+    firstName: String
+
+    "Number of available game plays"
     games: Int
+
+    lastName: String
+
+    level: Level
+
+    "URLs of external resources"
+    links: Links!
+
+    "Retrieve details of a specific mission"
+    mission(id: String!): Mission
+
+    "Search for missions available to the user"
+    missions(flag: MissionFlag!): [Mission!]
+
+    "Number of outstanding notifications"
+    notificationCount: Int # the api for this doesn't exist yet, but it'll come from Xchange
+    "URL of the user's avatar"
+    photoUrl: String
+
+    "Number of unspent points"
     points: Int
+
+    tasksByMissionId(missionId: String!): [TasksUnion!]
   }
 
   type Query {
+    "Return the name of this application"
+    applicationName: String!
+
+    "The current user as understood by DLE"
     me: User
-    mission(id: String!): Mission
-
-    demoSync: Boolean!
-    demoAsync: Boolean!
-
-    nackleOAuthToken: String!
-    availableGamePlays: Int
   }
 
+  "Model the success or failure result after marking a video or link as clicked"
   type MediaConsumedResult {
     eventId: String
     success: Boolean!
   }
 
   type Mutation {
-    linkClicked(url: String!): MediaConsumedResult
-    videoWatched(url: String!): MediaConsumedResult
+    "To be called when a user watched a video or clicked a link"
+    urlActionPerformed(url: String!, action: String!): MediaConsumedResult
+
+    # deprecated
+    "To be called when a user clicks a ClickThrough link"
+    linkClicked("URL of the link clicked" url: String!): MediaConsumedResult
+
+    "To be called when a user watches a Video"
+    # deprecated
+    videoWatched("srcUrl of the video" url: String!): MediaConsumedResult
   }
 `;
